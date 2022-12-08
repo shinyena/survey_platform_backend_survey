@@ -1,25 +1,21 @@
 package com.cloud.survey.service;
 
 import com.cloud.survey.dto.PageRequestDTO;
-import com.cloud.survey.dto.question.QuestionDTO;
-import com.cloud.survey.dto.survey.SurveyCategoryDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
-import com.cloud.survey.dto.survey.SurveyRequestDTO;
 import com.cloud.survey.entity.*;
 import com.cloud.survey.entity.Survey;
 import com.cloud.survey.entity.SurveyCategory;
 import com.cloud.survey.entity.SurveyStatus;
-//import com.cloud.survey.querydsl.SurveyRepositoryCustom;
-import com.cloud.survey.repository.QuestionRepository;
+import com.cloud.survey.querydsl.SurveyRepositoryCustom;
 import com.cloud.survey.repository.SurveyCategoryRepository;
 import com.cloud.survey.repository.SurveyRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @Service
@@ -40,8 +35,8 @@ public class SurveyServiceImpl implements SurveyService{
     @Autowired
     private final SurveyRepository surveyRepository;
 
-//    @Autowired
-//    private final SurveyRepositoryCustom surveyRepositoryCustom;
+    @Autowired
+    private final SurveyRepositoryCustom surveyRepositoryCustom;
     @Autowired
     private final ModelMapper mapper;
 
@@ -64,18 +59,21 @@ public class SurveyServiceImpl implements SurveyService{
         return surveyRepository.findByCategoryIdAndStatus(category_id, pageable);
     }
 
-    public Page<Map<String,Object>> getSurveyParticipateList(String title, String regId, Integer category_id, SurveyStatus status, PageRequestDTO requestDTO){
+    public Page<Map<String,Object>> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){
         Pageable pageable = requestDTO.getPageable(Sort.by("reg_dt").descending());
         return surveyRepository.findByCategoryIdAndRegIdAndStatus(regId, pageable);
 //        return surveyRepositoryCustom.findByCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
     }
 
-    public Page<Map<String,Object>> getSurveyMakeList(String title, String regId, Integer category_id, SurveyStatus status, PageRequestDTO requestDTO){
+    public Page<SurveyDTO> getSurveyMakeList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){
+        requestDTO.setSize(4);
         Pageable pageable = requestDTO.getPageable(Sort.by("reg_dt").descending());
-        return surveyRepository.findByCategoryIdAndRegId(regId, pageable);
-//        return surveyRepositoryCustom.findByRegIdAndCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
-    }
 
+        Page<SurveyDTO> tuplePageList = surveyRepositoryCustom.findByRegIdAndCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
+        List<SurveyDTO> list = tuplePageList.getContent();
+        return new PageImpl<>(list, pageable, tuplePageList.getTotalElements());
+
+    }
 
     public Survey insertSurvey(SurveyDTO surveyDTO, String userId){
         SurveyCategory surveyCategory = surveyCategoryRepository.findBySurCatId(surveyDTO.getCategoryId());

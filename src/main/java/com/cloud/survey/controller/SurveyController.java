@@ -68,7 +68,7 @@ public class SurveyController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/ptcp_list", method = RequestMethod.GET)
     public ResponseEntity<Page<Map<String,Object>>> getParticipateList(
-                                                    @RequestParam (value = "category_id", required = false) Integer categoryId,
+                                                    @RequestParam (value = "category_id") Integer[] categoryId,
                                                     @RequestParam (value = "status", required = false) SurveyStatus status,
                                                     @RequestParam (value = "title", required = false) String title,
                                                     Principal principal, PageRequestDTO pageRequestDTO) {
@@ -92,8 +92,8 @@ public class SurveyController {
     // 설문 생성 리스트 조회
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/make_list", method = RequestMethod.GET)
-    public ResponseEntity<Page<Map<String,Object>>> getMakeList(
-                                            @RequestParam (value = "category_id", required = false) Integer categoryId,
+    public ResponseEntity<Page<SurveyDTO>> getMakeList(
+                                            @RequestParam (value = "category_id", required = false) Integer[] categoryId,
                                             @RequestParam (value = "status", required = false) SurveyStatus status,
                                             @RequestParam (value = "title", required = false) String title,
                                             Principal principal, PageRequestDTO pageRequestDTO) {
@@ -101,11 +101,8 @@ public class SurveyController {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         String userId = token.getTokenAttributes().get("preferred_username").toString();
 
-//        List<Tuple> list =
-        Page<Map<String, Object>> list =
-                surveyService.getSurveyMakeList(title, userId, categoryId, status, pageRequestDTO);
+        Page<SurveyDTO> list =  surveyService.getSurveyMakeList(title, userId, categoryId, status, pageRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);
-
     }
 
     // 설문 조사 생성

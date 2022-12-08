@@ -2,9 +2,7 @@ package com.cloud.survey.service;
 
 
 import com.cloud.survey.dto.PageRequestDTO;
-import com.cloud.survey.dto.question.QuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
-import com.cloud.survey.dto.survey.SurveyRequestDTO;
 import com.cloud.survey.entity.*;
 import org.springframework.data.domain.Page;
 
@@ -20,10 +18,10 @@ public interface SurveyService {
     Page<Map<String,Object>> getSurveySearchList(Integer category_id, SurveyStatus status, PageRequestDTO requestDTO);
 
     // 설문조사 참여 리스트 조회
-    Page<Map<String,Object>> getSurveyParticipateList(String title, String regId, Integer category_id, SurveyStatus status, PageRequestDTO requestDTO);
+    Page<Map<String,Object>> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO);
 
     // 설문조사 생성 리스트 조회
-    Page<Map<String,Object>> getSurveyMakeList(String title, String regId, Integer category_id, SurveyStatus status, PageRequestDTO requestDTO);
+    Page<SurveyDTO> getSurveyMakeList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO);
 
     // 설문조사 생성
     Survey insertSurvey(SurveyDTO surveyDTO, String userId);
