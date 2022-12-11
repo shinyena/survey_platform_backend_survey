@@ -15,8 +15,11 @@ import java.util.Map;
 
 public interface SurveyRepository extends JpaRepository<Survey, Integer> {
 
+    // 설문 리스트 조회
     List<Survey> findByStatusAndIsPrivateYn(SurveyStatus status, IsYn isPrivateYn);
 
+
+    // 설문 검색 리스트 조회
     @Query(value =
             "SELECT sc.content, s.*, " +
             "(select count(*) " +
@@ -34,53 +37,24 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer> {
     Page<Map<String,Object>> findByCategoryIdAndStatus(@Param("categoryId") int categoryId, Pageable pageable);
 
 
-    @Query(value =
-            "SELECT" +
-            "    sc.content, " +
-            "    case " +
-            "        when s.status = 'P' then '제작' " +
-            "        when s.status = 'I' && due_dt > now() then '배포' " +
-            "        when s.status = 'I' && due_dt < now() then '마감' " +
-            "        end status_name, " +
-            "    if(s.status = 'I' && due_dt < now(), 'F', s.status) display_status, " +
-            "    s.* " +
-            "FROM survey s left join survey_category sc on sc.sur_cat_id = s.category_id " +
-            "WHERE 1=1 " +
-            "and s.status <> 'D'" +
-//            "and s.category_id = :categoryId " +
-//            "and s.status = :#{#status?.name()} " +
-            "and s.reg_id = :regId", nativeQuery = true)
-    Page<Map<String,Object>> findByCategoryIdAndRegId(@Param("regId") String regId, Pageable pageable);
-
-
-    @Query(value =
-            "SELECT" +
-            "    sc.content, " +
-            "    case " +
-            "        when s.status = 'P' then '제작' " +
-            "        when s.status = 'I' && due_dt > now() then '배포' " +
-            "        when s.status = 'I' && due_dt < now() then '마감' " +
-            "        end status_name, " +
-            "    if(s.status = 'I' && due_dt < now(), 'F', s.status) display_status, " +
-            "    s.* " +
-            "FROM survey s left join survey_category sc on sc.sur_cat_id = s.category_id " +
-            "    left outer join question q on s.sur_id = q.sur_id  join answer a on q.que_id = a.que_id and a.reg_id = :regId " +
-            "WHERE 1=1 " +
-            "and s.status <> 'D' " +
-//            "and s.category_id = :categoryId " +
-//            "and s.status = :#{#status?.name()} " +
-            "group by s.sur_id ", nativeQuery = true)
-    Page<Map<String,Object>> findByCategoryIdAndRegIdAndStatus(@Param("regId") String regId, Pageable pageable);
-
-
+    // 설문 상세 조회
     Survey findBySurId(int surId);
 
+
+    // 카테고리별 베스트 설문 조회
     @Query(value = "SELECT * FROM survey " +
             "WHERE category_id=:surCatId " +
             "ORDER BY views DESC, reg_dt DESC LIMIT 1;", nativeQuery = true)
     Survey findBestSurveyByCategory(Integer surCatId);
 
 
+    // 카테고리별 설문 리스트 조회
     @Query("select s.surId from Survey s where s.surveyCategory.surCatId = :surCatId")
     List<Integer> findSurIdBySurCatId(Integer surCatId);
+
+
+    // 설문 조회수 업데이트
+    @Query(value="UPDATE survey s SET s.views = s.views + 1 WHERE s.sur_id =:surId", nativeQuery = true)
+    void updateSurveyHits(@Param("surId") Integer surId);
+
 }

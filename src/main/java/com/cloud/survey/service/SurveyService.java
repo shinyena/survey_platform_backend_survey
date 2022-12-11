@@ -32,6 +32,8 @@ public interface SurveyService {
     // 카테고리별 인기 설문조사 조회
     List<Survey> getBestSurvey();
 
+    // 설문 조회수 업데이트
+    void updateSurveyHits(Integer surId);
 
     default Survey dtoToEntity(SurveyDTO dto, SurveyCategory surveyCategory, String userId) {
         Survey survey = Survey.builder()
@@ -43,6 +45,7 @@ public interface SurveyService {
                 .status(dto.getStatus())
                 .dueDt(dto.getDueDt())
                 .isLoginYn(dto.getIsLoginYn())
+                .views(0)
                 .isPrivateYn(dto.getIsPrivateYn())
                 .isModifyYn(dto.getIsModifyYn())
                 .isAnnoyYn(dto.getIsAnnoyYn())
@@ -53,7 +56,6 @@ public interface SurveyService {
         return survey;
     }
 
-
     default SurveyDTO entityToDTO(Survey survey) {
         SurveyDTO dto = SurveyDTO.builder()
                 .surId(survey.getSurId())
@@ -62,6 +64,7 @@ public interface SurveyService {
                 .categoryId(survey.getSurveyCategory().getSurCatId())
                 .categoryContent(survey.getSurveyCategory().getContent())
                 .version(survey.getVersion())
+                .views(survey.getViews())
                 .status(survey.getStatus())
                 .dueDt(survey.getDueDt())
                 .isLoginYn(survey.getIsLoginYn())

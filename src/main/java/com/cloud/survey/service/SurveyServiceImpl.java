@@ -100,5 +100,9 @@ public class SurveyServiceImpl implements SurveyService{
         return bestSurveyList;
     }
 
+    public void updateSurveyHits(Integer surId){
+        surveyRepository.updateSurveyHits(surId);
+    }
+
 
 }

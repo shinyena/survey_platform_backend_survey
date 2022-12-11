@@ -143,6 +143,9 @@ public class SurveyController {
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> getSurveyDetail(@RequestParam (value = "sur_id") int surId) {
 
+        // 조회수 업데이트
+        surveyService.updateSurveyHits(surId);
+
         Map<String, Object> map = new HashMap<>();
         map.put("info", surveyService.getSurveyDetail(surId));
         map.put("question_list", questionService.getSurveyQuestion(surId));
