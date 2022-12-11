@@ -74,8 +74,8 @@ public class SurveyRepositoryCustom {
 
 
         StringExpression caseStatusDeudateStr = new CaseBuilder()
-                .when(qSurvey.dueDt.before(LocalDateTime.now())).then("배포")
-                .when(qSurvey.dueDt.after(LocalDateTime.now())).then("마감").otherwise("");
+                .when(qSurvey.dueDt.before(LocalDateTime.now())).then("마감")
+                .when(qSurvey.dueDt.after(LocalDateTime.now())).then("배포").otherwise("");
 
 
         List<SurveyDTO> list = queryFactory
@@ -111,6 +111,7 @@ public class SurveyRepositoryCustom {
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(qSurvey.regDt.desc())
                 .fetch();
 
 
@@ -134,8 +135,8 @@ public class SurveyRepositoryCustom {
             String title, String regId, Integer[] categoryId, SurveyStatus status, Pageable pageable) {
 
         StringExpression caseStatusDeudateStr = new CaseBuilder()
-                .when(qSurvey.dueDt.before(LocalDateTime.now())).then("배포")
-                .when(qSurvey.dueDt.after(LocalDateTime.now())).then("마감").otherwise("");
+                .when(qSurvey.dueDt.before(LocalDateTime.now())).then("마감")
+                .when(qSurvey.dueDt.after(LocalDateTime.now())).then("배포").otherwise("");
 
 
         List<SurveyDTO> list = queryFactory
@@ -175,6 +176,7 @@ public class SurveyRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .groupBy(qSurvey.surId)
+                .orderBy(qSurvey.regDt.desc())
                 .fetch();
 
 
