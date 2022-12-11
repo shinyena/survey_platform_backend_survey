@@ -29,12 +29,28 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer> {
             "FROM survey s left join survey_category sc on sc.sur_cat_id = s.category_id " +
             "WHERE 1=1 " +
             "and s.status = 'I' " +
-//            "and s.due_dt < now() " +
             "and s.is_private = 'N' "
 //            "and s.category_id = :categoryId "
-//            "and status = :#{#status?.name()}"
             , nativeQuery = true)
     Page<Map<String,Object>> findByCategoryIdAndStatus(@Param("categoryId") int categoryId, Pageable pageable);
+
+    // 대상자 포함 설문 검색 리스트 조회
+
+    @Query(value =
+            "SELECT sc.content, s.*, " +
+                    "(select count(*) " +
+                    "from question q left join answer a on q.que_id = a.que_id and q.sur_id = s.sur_id " +
+                    "where a.del_yn <> 'N' " +
+                    "and a.que_id = (SELECT min(q.que_id) FROM question qu where sur_id=s.sur_id)) answer_cnt " +
+                    "FROM survey s left join survey_category sc on sc.sur_cat_id = s.category_id " +
+                    "WHERE 1=1 " +
+                    "and s.status = 'I' " +
+                    "and (s.is_private = 'N' ||(s.is_private = 'Y' and (select count(st.sur_id) from survey_target st where st.sur_id = s.sur_id and st.target_id = ':regId') > 0))"
+            , nativeQuery = true)
+    Page<Map<String,Object>> findByCategoryIdAndStatusAndTarget(@Param("categoryId") int categoryId, Pageable pageable, @Param("regId") String regId);
+
+
+
 
 
     // 설문 상세 조회

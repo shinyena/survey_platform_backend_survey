@@ -53,9 +53,15 @@ public class SurveyServiceImpl implements SurveyService{
     }
 
     @Override
-    public  Page<Map<String,Object>> getSurveySearchList(Integer category_id, SurveyStatus status, PageRequestDTO requestDTO){
+    public  Page<Map<String,Object>> getSurveySearchList(Integer category_id, SurveyStatus status, PageRequestDTO requestDTO, String regId){
         Pageable pageable = requestDTO.getPageable(Sort.by("reg_dt").descending());
-        return surveyRepository.findByCategoryIdAndStatus(category_id, pageable);
+        Page<Map<String,Object>> list = null;
+        if(regId == null){
+            list =  surveyRepository.findByCategoryIdAndStatus(category_id, pageable);
+        }else{
+            list = surveyRepository. findByCategoryIdAndStatusAndTarget(category_id, pageable, regId);
+        }
+        return list;
     }
 
     public Page<SurveyDTO> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){

@@ -15,7 +15,7 @@ public interface SurveyService {
     List<SurveyDTO> getSurveyList(SurveyStatus status, IsYn isPrivateYn);
 
     // 설문조사 검색 리스트 조회
-    Page<Map<String,Object>> getSurveySearchList(Integer category_id, SurveyStatus status, PageRequestDTO requestDTO);
+    Page<Map<String,Object>> getSurveySearchList(Integer category_id, SurveyStatus status, PageRequestDTO requestDTO,  String regId);
 
     // 설문조사 참여 리스트 조회
     Page<SurveyDTO> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO);

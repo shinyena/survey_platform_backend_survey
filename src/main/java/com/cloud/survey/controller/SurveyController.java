@@ -61,10 +61,18 @@ public class SurveyController {
 
     // 설문 검색리스트 조회
     @RequestMapping(value = "/search_list", method = RequestMethod.GET)
-    public ResponseEntity< Page<Map<String,Object>>> getSearchList(
-            @RequestParam (value = "category_id", required = false) Integer categoryId, @RequestParam (value = "status", required = false) SurveyStatus status, PageRequestDTO pageRequestDTO) {
+    public ResponseEntity< Page<Map<String,Object>>> getSearchList(  Principal principal,
+                                                                     @RequestParam (value = "category_id", required = false) Integer categoryId,
+                                                                     @RequestParam (value = "status", required = false) SurveyStatus status,
+                                                                     PageRequestDTO pageRequestDTO) {
 
-        Page<Map<String,Object>> list = surveyService.getSurveySearchList(categoryId, status, pageRequestDTO);
+        JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
+
+        String userId = null;
+        if(token != null){
+            userId = token.getTokenAttributes().get("preferred_username").toString();
+        }
+        Page<Map<String,Object>> list = surveyService.getSurveySearchList(categoryId, status, pageRequestDTO, userId);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
