@@ -59,10 +59,15 @@ public class SurveyServiceImpl implements SurveyService{
         return surveyRepository.findByCategoryIdAndStatus(category_id, pageable);
     }
 
-    public Page<Map<String,Object>> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){
+    public Page<SurveyDTO> getSurveyParticipateList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){
+        requestDTO.setSize(4);
         Pageable pageable = requestDTO.getPageable(Sort.by("reg_dt").descending());
-        return surveyRepository.findByCategoryIdAndRegIdAndStatus(regId, pageable);
-//        return surveyRepositoryCustom.findByCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
+
+        Page<SurveyDTO> tuplePageList = surveyRepositoryCustom.findByCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
+        List<SurveyDTO> list = tuplePageList.getContent();
+
+        return new PageImpl<>(list, pageable, tuplePageList.getTotalElements());
+
     }
 
     public Page<SurveyDTO> getSurveyMakeList(String title, String regId, Integer[] category_id, SurveyStatus status, PageRequestDTO requestDTO){
@@ -71,8 +76,8 @@ public class SurveyServiceImpl implements SurveyService{
 
         Page<SurveyDTO> tuplePageList = surveyRepositoryCustom.findByRegIdAndCategoryIdAndStatusAndTitle(title, regId, category_id, status, pageable);
         List<SurveyDTO> list = tuplePageList.getContent();
-        return new PageImpl<>(list, pageable, tuplePageList.getTotalElements());
 
+        return new PageImpl<>(list, pageable, tuplePageList.getTotalElements());
     }
 
     public Survey insertSurvey(SurveyDTO surveyDTO, String userId){

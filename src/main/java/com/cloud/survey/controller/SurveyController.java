@@ -67,8 +67,8 @@ public class SurveyController {
     // 설문 참여리스트 조회
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/ptcp_list", method = RequestMethod.GET)
-    public ResponseEntity<Page<Map<String,Object>>> getParticipateList(
-                                                    @RequestParam (value = "category_id") Integer[] categoryId,
+    public ResponseEntity<Page<SurveyDTO>> getParticipateList(
+                                                    @RequestParam (value = "category") Integer[] categoryId,
                                                     @RequestParam (value = "status", required = false) SurveyStatus status,
                                                     @RequestParam (value = "title", required = false) String title,
                                                     Principal principal, PageRequestDTO pageRequestDTO) {
@@ -76,16 +76,9 @@ public class SurveyController {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         String userId = token.getTokenAttributes().get("preferred_username").toString();
 
-//        List<Tuple> list
-        Page<Map<String, Object>> list =
-                surveyService.getSurveyParticipateList(title, userId, categoryId, status, pageRequestDTO);
+        Page<SurveyDTO> list = surveyService.getSurveyParticipateList(title, userId, categoryId, status, pageRequestDTO);
 
-//        Map<String, Object> returnMap = new HashMap<>();
-//        for (Tuple tuple : list) {
-//            returnMap.put(tuple.get(0,String.class), tuple.get(1,Object.class));
-//        }
         return new ResponseEntity<>(list, HttpStatus.OK);
-
     }
 
 
@@ -93,7 +86,7 @@ public class SurveyController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/make_list", method = RequestMethod.GET)
     public ResponseEntity<Page<SurveyDTO>> getMakeList(
-                                            @RequestParam (value = "category_id", required = false) Integer[] categoryId,
+                                            @RequestParam (value = "category", required = false) Integer[] categoryId,
                                             @RequestParam (value = "status", required = false) SurveyStatus status,
                                             @RequestParam (value = "title", required = false) String title,
                                             Principal principal, PageRequestDTO pageRequestDTO) {
@@ -102,6 +95,7 @@ public class SurveyController {
         String userId = token.getTokenAttributes().get("preferred_username").toString();
 
         Page<SurveyDTO> list =  surveyService.getSurveyMakeList(title, userId, categoryId, status, pageRequestDTO);
+
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

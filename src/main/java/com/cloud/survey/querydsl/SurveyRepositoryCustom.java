@@ -38,6 +38,9 @@ public class SurveyRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final EntityManager entityManager;
     QSurvey qSurvey = QSurvey.survey;
+    QQuestion qQuestion = QQuestion.question;
+    QAnswer qAnswer = QAnswer.answer;
+
     QSurveyCategory qSurveyCategory = QSurveyCategory.surveyCategory;
 
 
@@ -127,33 +130,71 @@ public class SurveyRepositoryCustom {
         return  new PageImpl<>(list, pageable, count);
     }
 
-    public List<Tuple> findByCategoryIdAndStatusAndTitle( // 참여목록
+    public Page<SurveyDTO> findByCategoryIdAndStatusAndTitle( // 참여목록
             String title, String regId, Integer[] categoryId, SurveyStatus status, Pageable pageable) {
 
-        var date = LocalDateTime.now();
+        StringExpression caseStatusDeudateStr = new CaseBuilder()
+                .when(qSurvey.dueDt.before(LocalDateTime.now())).then("배포")
+                .when(qSurvey.dueDt.after(LocalDateTime.now())).then("마감").otherwise("");
 
-        List<Tuple> results = queryFactory
-                .select(qSurvey, qSurveyCategory.content
-                        , new CaseBuilder()
+
+        List<SurveyDTO> list = queryFactory
+                .select(new QSurveyDTO(
+                                qSurvey.surId
+                                ,qSurvey.title
+                                ,qSurvey.description
+                                ,qSurvey.surveyCategory.surCatId
+                                ,qSurveyCategory.content.as("categoryContent")
+                                ,qSurvey.version
+                                ,qSurvey.status
+                                ,qSurvey.dueDt
+                                ,qSurvey.isLoginYn
+                                ,qSurvey.isPrivateYn
+                                ,qSurvey.isModifyYn
+                                ,qSurvey.isAnnoyYn
+                                ,qSurvey.regId
+                                ,qSurvey.regDt
+                                ,qSurvey.views
+                                , new CaseBuilder()
                                 .when(qSurvey.status.eq(SurveyStatus.valueOf("P"))).then("제작")
-                                .when(qSurvey.status.eq(SurveyStatus.valueOf("I"))).then("배포")
-                                .otherwise("")
-//
+                                .when(qSurvey.status.eq(SurveyStatus.valueOf("I"))).then(caseStatusDeudateStr)
+                                .otherwise("").as("statusName")
+                        )
                 )
                 .from(qSurvey)
                 .leftJoin(qSurveyCategory)
                 .on(qSurvey.surveyCategory.surCatId.eq(qSurveyCategory.surCatId))
+                .leftJoin(qQuestion)
+                .on(qSurvey.surId.eq(qQuestion.survey.surId))
+                .join(qAnswer)
+                .on(qQuestion.queId.eq(qAnswer.question.queId).and(qAnswer.regId.eq((regId))))
                 .where(
-                        eqRegId(regId),
                         inCategoryId(categoryId),
-                        eqStatus(status),
                         likeTitle(title)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .groupBy(qSurvey.surId)
                 .fetch();
 
-        return results;
+
+        Long count = queryFactory
+                .select(qSurvey.count())
+                .from(qSurvey)
+                .leftJoin(qSurveyCategory)
+                .on(qSurvey.surveyCategory.surCatId.eq(qSurveyCategory.surCatId))
+                .leftJoin(qQuestion)
+                .on(qSurvey.surId.eq(qQuestion.survey.surId))
+                .join(qAnswer)
+                .on(qQuestion.queId.eq(qAnswer.question.queId).and(qAnswer.regId.eq((regId))))
+                .where(
+                        inCategoryId(categoryId),
+                        likeTitle(title)
+                )
+                .fetchOne();
+
+
+        return  new PageImpl<>(list, pageable, count);
 
     }
 
@@ -166,7 +207,7 @@ public class SurveyRepositoryCustom {
     }
 
     private BooleanExpression inCategoryId(Integer[] cateId) {
-        if (cateId == null) {
+        if (cateId == null || cateId.length <0) {
             return null;
         }
         return qSurvey.surveyCategory.surCatId.in(cateId);
