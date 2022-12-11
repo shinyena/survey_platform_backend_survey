@@ -62,8 +62,9 @@ public class SurveyController {
     // 설문 검색리스트 조회
     @RequestMapping(value = "/search_list", method = RequestMethod.GET)
     public ResponseEntity< Page<Map<String,Object>>> getSearchList(  Principal principal,
-                                                                     @RequestParam (value = "category_id", required = false) Integer categoryId,
+                                                                     @RequestParam (value = "category", required = false) Integer categoryId,
                                                                      @RequestParam (value = "status", required = false) SurveyStatus status,
+                                                                     @RequestParam (value = "title", required = false) String title,
                                                                      PageRequestDTO pageRequestDTO) {
 
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
