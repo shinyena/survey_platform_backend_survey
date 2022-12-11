@@ -4,6 +4,7 @@ import com.cloud.survey.dto.PageRequestDTO;
 import com.cloud.survey.dto.question.QuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
 import com.cloud.survey.dto.survey.SurveyRequestDTO;
+import com.cloud.survey.dto.survey.SurveyTargetDTO;
 import com.cloud.survey.dto.vulgarism.VulgarismDTO;
 import com.cloud.survey.entity.IsYn;
 import com.cloud.survey.entity.Survey;
@@ -11,6 +12,7 @@ import com.cloud.survey.entity.SurveyStatus;
 import com.cloud.survey.entity.SurveyVulgarism;
 import com.cloud.survey.service.QuestionService;
 import com.cloud.survey.service.SurveyService;
+import com.cloud.survey.service.SurveyTargetService;
 import com.cloud.survey.service.SurveyVulgarismService;
 import com.cloud.survey.service.kafka.producer.KafkaProducer;
 import lombok.extern.log4j.Log4j2;
@@ -37,13 +39,15 @@ public class SurveyController {
     private SurveyService surveyService;
 
     @Autowired
+    private SurveyTargetService surveyTargetService;
+
+    @Autowired
     private QuestionService questionService;
 
     @Autowired
     private KafkaProducer kafkaProducer;
 
-//    @Autowired
-//    private SurveyVulgarism surveyVulgarism;
+
 
     @Autowired
     private SurveyVulgarismService surveyVulgarismService;
@@ -108,11 +112,19 @@ public class SurveyController {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         String userId = token.getTokenAttributes().get("preferred_username").toString();
 
+        // 기본정보
         SurveyDTO surveyDTO = surveyRequestDTO.getSurvey();
-        List<QuestionDTO> questionDTOList = surveyRequestDTO.getQuestionDTOList();
-
         Survey survey = surveyService.insertSurvey(surveyDTO, userId);
+
+        // 질문
+        List<QuestionDTO> questionDTOList = surveyRequestDTO.getQuestionDTOList();
         questionService.insertSurveyQuestion(questionDTOList, survey, userId);
+
+        // 발송
+        if(surveyRequestDTO.getSend_yn().equals("Y")){ // 바로 배포
+            List<SurveyTargetDTO> surveyTargetDTOList = surveyRequestDTO.getSurveyTargetDTOList();
+            surveyTargetService.insertSurveyTarget(surveyTargetDTOList, survey);
+        }
 
         // 설문 생성 카프카 토픽
         Map<String, Object> surveyMap = new HashMap<>();

@@ -26,9 +26,6 @@ public interface SurveyService {
     // 설문조사 생성
     Survey insertSurvey(SurveyDTO surveyDTO, String userId);
 
-    // 설문조사 타겟 생성
-    void insertSurveyTarget(List<SurveyTarget> targetList);
-
     // 설문 상세정보 조회
     SurveyDTO getSurveyDetail (int surId);
 

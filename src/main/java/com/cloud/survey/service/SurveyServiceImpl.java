@@ -34,7 +34,6 @@ public class SurveyServiceImpl implements SurveyService{
     private final SurveyCategoryRepository surveyCategoryRepository;
     @Autowired
     private final SurveyRepository surveyRepository;
-
     @Autowired
     private final SurveyRepositoryCustom surveyRepositoryCustom;
     @Autowired
@@ -85,11 +84,6 @@ public class SurveyServiceImpl implements SurveyService{
         Survey save = surveyRepository.save(dtoToEntity(surveyDTO, surveyCategory, userId));
         return save;
     }
-
-    public void insertSurveyTarget( List<SurveyTarget> targetList){
-
-    }
-
 
     public SurveyDTO getSurveyDetail (int surId){
         Survey survey = surveyRepository.findBySurId(surId);
