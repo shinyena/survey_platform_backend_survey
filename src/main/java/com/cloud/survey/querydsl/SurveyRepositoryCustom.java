@@ -207,7 +207,7 @@ public class SurveyRepositoryCustom {
     }
 
     private BooleanExpression inCategoryId(Integer[] cateId) {
-        if (cateId == null || cateId.length <0) {
+        if (cateId == null || cateId.length <1) {
             return null;
         }
         return qSurvey.surveyCategory.surCatId.in(cateId);
