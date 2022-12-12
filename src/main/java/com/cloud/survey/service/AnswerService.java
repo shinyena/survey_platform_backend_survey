@@ -24,6 +24,7 @@ public interface AnswerService {
                 .type(dto.getType())
                 .content(dto.getContent())
                 .regId(dto.getRegId())
+                .delYn(false)
                 .build();
         return answer;
     }
