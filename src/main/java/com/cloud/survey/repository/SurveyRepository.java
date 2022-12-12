@@ -25,7 +25,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer> {
             "(select count(*) " +
             "from question q left join answer a on q.que_id = a.que_id and q.sur_id = s.sur_id " +
             "where a.del_yn <> 1 " +
-            "and a.que_id = (SELECT min(q.que_id) FROM question qu where sur_id=s.sur_id)) answer_cnt " +
+            "and a.que_id = (SELECT min(qu.que_id) FROM question qu where sur_id=s.sur_id)) answer_cnt " +
             "FROM survey s left join survey_category sc on sc.sur_cat_id = s.category_id " +
             "WHERE 1=1 " +
             "and s.status = 'I' " +
