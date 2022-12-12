@@ -9,11 +9,7 @@ import com.cloud.survey.dto.vulgarism.VulgarismDTO;
 import com.cloud.survey.entity.IsYn;
 import com.cloud.survey.entity.Survey;
 import com.cloud.survey.entity.SurveyStatus;
-import com.cloud.survey.entity.SurveyVulgarism;
-import com.cloud.survey.service.QuestionService;
-import com.cloud.survey.service.SurveyService;
-import com.cloud.survey.service.SurveyTargetService;
-import com.cloud.survey.service.SurveyVulgarismService;
+import com.cloud.survey.service.*;
 import com.cloud.survey.service.kafka.producer.KafkaProducer;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +43,8 @@ public class SurveyController {
     @Autowired
     private KafkaProducer kafkaProducer;
 
-
+    @Autowired
+    private AnswerService answerService;
 
     @Autowired
     private SurveyVulgarismService surveyVulgarismService;
@@ -150,14 +147,19 @@ public class SurveyController {
     // 설문 상세정보, 질문 조회
     @Transactional
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> getSurveyDetail(@RequestParam (value = "sur_id") int surId) {
-
+    public ResponseEntity<Map<String, Object>> getSurveyDetail(Principal principal, @RequestParam (value = "sur_id") int surId) {
         // 조회수 업데이트
         surveyService.updateSurveyHits(surId);
 
         Map<String, Object> map = new HashMap<>();
         map.put("info", surveyService.getSurveyDetail(surId));
         map.put("question_list", questionService.getSurveyQuestion(surId));
+
+        if (principal != null) {
+            JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
+            String userId = token.getTokenAttributes().get("preferred_username").toString();
+            map.put("answer_list", answerService.getAnswerList(surId, userId));
+        }
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
