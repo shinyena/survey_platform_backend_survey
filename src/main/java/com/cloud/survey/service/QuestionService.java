@@ -17,6 +17,7 @@ public interface QuestionService {
 
     void insertSurveyQuestionOption(List<QuestionOption> questionOptionList, Question question); // 설문 질문옵션 생성
 
+     List<String> getSurveyQuestionContentList (int surId); // 설문 질문내용 조회
 
     default Question dtoToEntity(QuestionDTO dto, Survey survey, String regId) {
         Question question = Question.builder()

@@ -21,7 +21,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,6 +188,17 @@ public class SurveyController {
     public List<VulgarismDTO> getVulgarismList() {
         List<VulgarismDTO> vulgarismList = surveyVulgarismService.getVulgarismList();
         return vulgarismList;
+    }
+
+
+
+    //엑셀 다운로드
+    @GetMapping(value = "/download/excel", produces = "application/vnd.ms-excel")
+    public void excelDownload(HttpServletResponse res, @RequestParam (value = "sur_id") Integer surId) throws UnsupportedEncodingException, ParseException {
+
+        List<String> headerList = questionService.getSurveyQuestionContentList(surId);
+        List<String> answerList = new ArrayList<>();
+       surveyService.excelDownload(res, headerList, answerList, surId);
     }
 
 }

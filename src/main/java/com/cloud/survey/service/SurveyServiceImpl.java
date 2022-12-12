@@ -20,9 +20,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 @Service
@@ -38,6 +41,9 @@ public class SurveyServiceImpl implements SurveyService{
     private final SurveyRepositoryCustom surveyRepositoryCustom;
     @Autowired
     private final ModelMapper mapper;
+
+    @Autowired
+    private final ExcelService excelService;
 
     @Override
     public List<SurveyDTO> getSurveyList(SurveyStatus status, IsYn isPrivateYn){
@@ -109,6 +115,21 @@ public class SurveyServiceImpl implements SurveyService{
     public void updateSurveyHits(Integer surId){
         surveyRepository.updateSurveyHits(surId);
     }
+
+
+
+    public void excelDownload (HttpServletResponse response, List<String> headerList, List<String> answerList, Integer surId){
+
+        SurveyDTO surveyDTO = entityToDTO(surveyRepository.findBySurId(surId));
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("header", headerList);
+        map.put("row", answerList);
+
+        excelService.createExcelDownloadResponse(response, surveyDTO, map);
+
+    }
+
 
 
 }

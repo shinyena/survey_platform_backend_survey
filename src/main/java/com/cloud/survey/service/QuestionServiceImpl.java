@@ -19,8 +19,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService{
-    @Autowired
+
     private final QuestionRepository questionRepository;
+
+    @Autowired
+    private final QuestionOptionRepository questionOptionRepository;
+
 
     public void insertSurveyQuestion(List<QuestionDTO> questionDTOList, Survey survey, String regId){
 
@@ -37,9 +41,6 @@ public class QuestionServiceImpl implements QuestionService{
         });
     }
 
-    @Autowired
-    private final QuestionOptionRepository questionOptionRepository;
-
     @Transactional
     public List<QuestionDTO> getSurveyQuestion (int surId){
         List<QuestionDTO> questionDtoList = new ArrayList<>();
@@ -53,5 +54,17 @@ public class QuestionServiceImpl implements QuestionService{
 
         return questionDtoList;
     }
+
+    public List<String> getSurveyQuestionContentList (int surId){
+        List<String> questionContentList = new ArrayList<>();
+        List<Question> questionList = questionRepository.findBySurId(surId);
+        questionList.forEach(question -> {
+            questionContentList.add(question.getContent());
+        });
+
+        return questionContentList;
+    }
+
+
 
 }

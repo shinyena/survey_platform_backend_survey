@@ -40,6 +40,12 @@ spring:
         jwt:
           jwk-set-uri: http://localhost:5010/realms/team_cloud/protocol/openid-connect/certs
 #          jwk-set-uri: http://210.109.61.78:5010/realms/team_cloud/protocol/openid-connect/certs
+  mvc:
+    contentnegotiation:
+      favor-parameter: true
+      favor-path-extension: true
+      media-types:
+        xls: application/vnd.ms-excel
 
 keycloak:
   realm: team_cloud
