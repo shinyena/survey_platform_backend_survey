@@ -20,13 +20,13 @@ spring:
     show-sql: false
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: 210.109.61.78:9092
       group-id: survey_platform
       auto-offset-reset: earliest
 #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 #      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: 210.109.61.78:9092
 #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
 #      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   output:
@@ -36,14 +36,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:5010/realms/team_cloud/protocol/openid-connect/certs
+          jwk-set-uri: http://210.109.61.78:5010/realms/team_cloud/protocol/openid-connect/certs
 
 keycloak:
   realm: team_cloud
   bearer-only: true
   ssl-required: external
   resource: team_cloud_client
-  auth-server-url: http://localhost:5010/
+  auth-server-url: http://210.109.61.78:5010/
   credentials:
     secret: AvgjtsAvqQUNfo9DemEpANjMt3YrAtbt
 #  public-client: false
@@ -56,4 +56,5 @@ eureka:
     register-with-eureka: true
     fetchRegistry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://210.109.61.200:30061/eureka
