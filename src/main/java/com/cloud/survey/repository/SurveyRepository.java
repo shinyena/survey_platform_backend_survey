@@ -21,7 +21,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer> {
 
     // 설문 검색 리스트 조회
     @Query(value =
-            "SELECT sc.content, s.*, " +
+            "SELECT sc.content, s.* " +
 //            "(select count(*) " +
 //            "from question q left join answer a on q.que_id = a.que_id and q.sur_id = s.sur_id " +
 //            "where a.del_yn <> 1 " +
@@ -37,7 +37,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Integer> {
     // 대상자 포함 설문 검색 리스트 조회
 
     @Query(value =
-            "SELECT sc.content, s.*, " +
+            "SELECT sc.content, s.* " +
 //                    "(select count(*) " +
 //                    "from question q left join answer a on q.que_id = a.que_id and q.sur_id = s.sur_id " +
 //                    "where a.del_yn <> 1 " +
