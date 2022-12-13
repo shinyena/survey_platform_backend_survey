@@ -14,6 +14,9 @@ public interface AnswerService {
     Map<String,Object> getSurveyAnswerAnalysis(int surId); // 설문 응답시간, 응답자 데이터 조회
 
     List<AnswerQuestionDTO> getAnswerList(Integer surId, String regId);
+
+    List<AnswerQuestionDTO> getAllAnswerList(Integer surId);
+
     void insertAnswer(Integer surId, List<AnswerDTO> answerList);
     void updateAnswer(Integer surId, List<AnswerDTO> answerList);
     void deleteAnswer(Integer surId, String regId);

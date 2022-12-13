@@ -2,6 +2,7 @@ package com.cloud.survey.service;
 
 
 import com.cloud.survey.dto.PageRequestDTO;
+import com.cloud.survey.dto.answer.AnswerQuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
 import com.cloud.survey.entity.*;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,7 @@ public interface SurveyService {
     // 설문 조회수 업데이트
     void updateSurveyHits(Integer surId);
 
-    void excelDownload (HttpServletResponse response, List<String> headerList, List<String> answerList, Integer surId);
+    void excelDownload (HttpServletResponse response, List<String> headerList, List<AnswerQuestionDTO> answerList, Integer surId);
 
     default Survey dtoToEntity(SurveyDTO dto, SurveyCategory surveyCategory, String userId) {
         Survey survey = Survey.builder()

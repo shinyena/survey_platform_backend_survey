@@ -1,6 +1,7 @@
 package com.cloud.survey.service;
 
 import com.cloud.survey.dto.PageRequestDTO;
+import com.cloud.survey.dto.answer.AnswerQuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
 import com.cloud.survey.entity.*;
 import com.cloud.survey.entity.Survey;
@@ -118,7 +119,7 @@ public class SurveyServiceImpl implements SurveyService{
 
 
 
-    public void excelDownload (HttpServletResponse response, List<String> headerList, List<String> answerList, Integer surId){
+    public void excelDownload (HttpServletResponse response, List<String> headerList, List<AnswerQuestionDTO> answerList, Integer surId){
 
         SurveyDTO surveyDTO = entityToDTO(surveyRepository.findBySurId(surId));
 

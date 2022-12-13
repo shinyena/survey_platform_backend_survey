@@ -82,6 +82,34 @@ public class AnswerServiceImpl implements AnswerService {
         return answerQuestionDTOList;
     }
 
+
+    @Override
+    public List<AnswerQuestionDTO> getAllAnswerList(Integer surId) {
+        List<AnswerQuestionDTO> answerQuestionDTOList = new ArrayList<>();
+        List<Answer> answerList = answerRepository.findAnswerBySurId(surId);
+        answerList.forEach(answer -> {
+            AnswerQuestionDTO answerQuestionDTO = AnswerQuestionDTO.builder()
+                    .ansId(answer.getAnsId())
+                    .ansType(answer.getType())
+                    .ansContent(answer.getContent())
+                    .regId(answer.getRegId())
+                    .queId(answer.getQuestion().getQueId())
+                    .surId(answer.getQuestion().getSurvey().getSurId())
+                    .queType(answer.getQuestion().getQType())
+                    .queContent(answer.getQuestion().getContent())
+                    .optionList(new ArrayList<>())
+                    .build();
+            List<QuestionOption> questionOptionList = questionOptionRepository.findQuestionOptionByQueId(answer.getQuestion().getQueId());
+            questionOptionList.forEach(questionOption -> {
+                answerQuestionDTO.addOptionList(questionOption);
+            });
+            answerQuestionDTOList.add(answerQuestionDTO);
+        });
+        return answerQuestionDTOList;
+    }
+
+
+
     @Override
     public void insertAnswer(Integer surId, List<AnswerDTO> answerDTOList) {
         List<Map<String, Object>> byRegIdAndSurId = answerRepository.findByRegIdAndSurId(answerDTOList.get(0).getRegId(), surId);

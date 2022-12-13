@@ -30,7 +30,22 @@ public class QuestionServiceImpl implements QuestionService{
 
         questionDTOList.forEach(questionDTO -> {
             Question save = questionRepository.save(dtoToEntity(questionDTO, survey, regId));
-            insertSurveyQuestionOption(questionDTO.getOptionList(), save);
+            if(questionDTO.getQuestionType().equals("YN")){
+                List<QuestionOption> optionList = new ArrayList<>();
+                QuestionOption questionOption1= new QuestionOption();
+                questionOption1.setQueOptId(1);
+                questionOption1.setOptionOrder(1);
+                questionOption1.setOptionName("예");
+                optionList.add(questionOption1);
+                QuestionOption questionOption2= new QuestionOption();
+                questionOption1.setQueOptId(2);
+                questionOption2.setOptionOrder(2);
+                questionOption1.setOptionName("아니요");
+                optionList.add(questionOption2);
+                insertSurveyQuestionOption(optionList, save);
+            }else{
+                insertSurveyQuestionOption(questionDTO.getOptionList(), save);
+            }
         });
     }
 

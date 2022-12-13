@@ -1,6 +1,8 @@
 package com.cloud.survey.service;
 
+import com.cloud.survey.dto.answer.AnswerQuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
+import com.cloud.survey.entity.Survey;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -46,31 +48,23 @@ public class ExcelService {
                 cell.setCellValue(header.get(i));
             }
 
-            List<String> answerList = (List<String>) map.get("row");
-            //바디
-            for (int i = 0; i < answerList.size(); i++) {
-                row = sheet.createRow( i+1);  //헤더 이후로 데이터가 출력되어야하니 +1
-//
-//                UserPoint userPoint = userPointList.get(i);
-//
-//                Cell cell = null;
-//                cell = row.createCell(0);
-//                cell.setCellValue(userPoint.getId());
-//
-//                cell = row.createCell(1);
-//                cell.setCellValue(userPoint.getUserCode());
-//
-//                cell = row.createCell(2);
-//                cell.setCellValue(userPoint.getUserName());
-//
-//                cell = row.createCell(3);
-//                cell.setCellValue(userPoint.getPayCnt());
-//
-//                cell = row.createCell(4);
-//                cell.setCellStyle(numberCellStyle);      //숫자포맷 적용
-//                cell.setCellValue(userPoint.getPaySum());
-            }
 
+
+            List<AnswerQuestionDTO> answerList = (List<AnswerQuestionDTO>) map.get("row");
+            row = sheet.createRow(1);  //헤더 이후로 데이터가 출력되어야하니 +1
+            int rownum = 1;
+
+            for (int j = 0; j < answerList.size(); j++) {
+                if(j == header.size()){
+                    row = sheet.createRow(rownum+1);  //헤더 이후로 데이터가 출력되어야하니 +1
+                }
+                AnswerQuestionDTO answerQuestionDTO = answerList.get(j);
+                Cell cell = null;
+                cell = row.createCell(j-(header.size()*(rownum)));
+                cell.setCellValue(answerQuestionDTO.getAnsContent());
+
+
+            }
 
             response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");

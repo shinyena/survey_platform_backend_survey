@@ -1,6 +1,8 @@
 package com.cloud.survey.controller;
 
 import com.cloud.survey.dto.PageRequestDTO;
+import com.cloud.survey.dto.answer.AnswerDTO;
+import com.cloud.survey.dto.answer.AnswerQuestionDTO;
 import com.cloud.survey.dto.question.QuestionDTO;
 import com.cloud.survey.dto.survey.SurveyDTO;
 import com.cloud.survey.dto.survey.SurveyRequestDTO;
@@ -197,7 +199,8 @@ public class SurveyController {
     public void excelDownload(HttpServletResponse res, @RequestParam (value = "sur_id") Integer surId) throws UnsupportedEncodingException, ParseException {
 
         List<String> headerList = questionService.getSurveyQuestionContentList(surId);
-        List<String> answerList = new ArrayList<>();
+        List<AnswerQuestionDTO> answerList = answerService.getAllAnswerList(surId);
+
        surveyService.excelDownload(res, headerList, answerList, surId);
     }
 
