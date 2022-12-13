@@ -55,14 +55,13 @@ public class ExcelService {
             int rownum = 1;
 
             for (int j = 0; j < answerList.size(); j++) {
-                if(j == header.size()){
-                    row = sheet.createRow(rownum+1);  //헤더 이후로 데이터가 출력되어야하니 +1
-                }
                 AnswerQuestionDTO answerQuestionDTO = answerList.get(j);
                 Cell cell = null;
-                cell = row.createCell(j-(header.size()*(rownum)));
+                cell = row.createCell(j);
                 cell.setCellValue(answerQuestionDTO.getAnsContent());
-
+                if(j == header.size()-1){
+                    row = sheet.createRow(rownum+1);  //헤더 이후로 데이터가 출력되어야하니 +1
+                }
 
             }
 
