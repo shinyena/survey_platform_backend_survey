@@ -28,10 +28,16 @@
 |POST|/survey-service/v1/survey/vulgarismInsert|비속어 저장|
 |GET|/survey-service/v1/survey/vulgarismList|비속어 목록 조회|
 |GET|/survey-service/v1/survey/download/excel|설문 엑셀 다운로드|
+
+|Method|API|Description|
+|---|---|---|
 |GET|/survey-service/v1/survey/category/list|설문 카테고리 전체 조회|
 |GET|/survey-service/v1/survey/category/selectlist|설문 카테고리 조회|
 |POST|/survey-service/v1/survey/category/reg|설문 카테고리 생성|
 |POST|/survey-service/v1/survey/category/del|설문 카테고리 삭제|
+
+|Method|API|Description|
+|---|---|---|
 |POST|/survey-service/v1/answer/user_answer|답변 조회(사용자)|
 |POST|/survey-service/v1/answer/list|답변 조회(설문)|
 |POST|/survey-service/v1/answer/reg|답변 등록|
